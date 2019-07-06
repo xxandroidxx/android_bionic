@@ -43,6 +43,11 @@ static inline int force_O_LARGEFILE(int flags) {
 #endif
 }
 
+static inline void fix_path(const char* pathname) {
+  pid_t pid;
+  pid = getpid();
+}
+
 int creat(const char* pathname, mode_t mode) {
   return open(pathname, O_CREAT | O_TRUNC | O_WRONLY, mode);
 }
@@ -57,6 +62,8 @@ int open(const char* pathname, int flags, ...) {
     mode = static_cast<mode_t>(va_arg(args, int));
     va_end(args);
   }
+
+  fix_path(pathname);
 
   return __openat(AT_FDCWD, pathname, force_O_LARGEFILE(flags), mode);
 }
